@@ -1,0 +1,79 @@
+@font-face {
+  font-family: 'Golos Text';
+  src: url('/fonts/GolosText-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Tiny5';
+  src: url('/fonts/Tiny5-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Fira Mono';
+  src: url('/fonts/FiraMono-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Text colors (from Figma variables) */
+  --c-text-primary: #FFFFFF;
+  --c-text-secondary: #707070;
+  --c-text-tertiary: rgba(0, 0, 0, 0.2);
+  --c-text-accent: #DEF511;
+  --c-text-invert: #0D0C0D;
+
+  /* Background colors (from Figma variables) */
+  --c-bg-main: #0D0C0D;
+  --c-bg-accent: #DEF511;
+  --c-bg-secondary: #181818;
+
+  /* Spacing scale (base 8px) — fluid via clamp */
+  --space-xs: clamp(4px, 0.5vw, 8px);
+  --space-s: clamp(8px, 1vw, 16px);
+  --space-m: clamp(16px, 2vw, 32px);
+  --space-l: clamp(32px, 4vw, 64px);
+  --space-xl: clamp(48px, 6vw, 96px);
+  --space-2xl: clamp(64px, 8vw, 128px);
+
+  /* Grid */
+  --grid-margin: clamp(16px, 3.125vw, 45px);
+  --grid-gap: clamp(8px, 1.25vw, 18px);
+  --grid-margin-pct: 3.125%;
+  --grid-col1: 21.875%;
+  --grid-col2: 42%;
+  --grid-col3: 33%;
+  --grid-col-padding: clamp(0.5rem, 0.5rem + 0.5vw, 1.25rem);
+  --grid-margin-mobile: clamp(16px, 4vw, 32px);
+  --case-nav-height: 8em;
+
+  /* Typography — fluid sizes */
+  --font-body: 'Golos Text', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Tiny5', system-ui, sans-serif;
+  --font-ascii: 'Fira Mono', 'Courier New', Courier, monospace;
+
+  --text-xs: clamp(0.625rem, 0.55rem + 0.25vw, 0.75rem);
+  --text-s: clamp(0.75rem, 0.65rem + 0.35vw, 0.875rem);
+  --text-m: clamp(0.875rem, 0.8rem + 0.4vw, 1.125rem);
+  --text-l: clamp(1.125rem, 1rem + 0.5vw, 1.5rem);
+  --text-xl: clamp(1.5rem, 1.2rem + 1vw, 2.5rem);
+  --text-2xl: clamp(2rem, 1.5rem + 2vw, 4.5rem);
+  --text-hero: clamp(2.5rem, 2rem + 3vw, 7rem);
+
+  /* Transitions */
+  --ease-out: cubic-bezier(0.25, 0, 0.25, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 600ms;
+
+  /* Z-index layers */
+  --z-nav: 100;
+  --z-gallery: 200;
+}

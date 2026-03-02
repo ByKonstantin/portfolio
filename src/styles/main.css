@@ -1,0 +1,66 @@
+@import './variables.css';
+@import './nav.css';
+@import './hero.css';
+@import './cases.css';
+@import './contact.css';
+@import './gallery.css';
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-snap-type: y mandatory;
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-m);
+  line-height: 1.5;
+  color: var(--c-text-primary);
+  background-color: var(--c-bg-main);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+body.gallery-open {
+  overflow: hidden;
+}
+
+/* Скрыть case-nav и sticky-nav на экране контактов */
+body.contact-visible .case-section__nav.is-fixed,
+body.contact-visible .sticky-nav {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+a {
+  color: var(--c-text-accent);
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  html {
+    scroll-snap-type: none;
+  }
+}

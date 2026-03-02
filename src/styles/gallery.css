@@ -1,0 +1,65 @@
+.gallery {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-gallery);
+  background-color: color-mix(in srgb, var(--c-bg-main) 95%, transparent);
+  transform: translateX(100%);
+  transition: transform var(--duration-slow) var(--ease-out);
+  display: flex;
+  flex-direction: column;
+}
+
+.gallery[aria-hidden="false"] {
+  transform: translateX(0);
+}
+
+.gallery__close {
+  position: absolute;
+  top: var(--space-m);
+  right: var(--space-m);
+  z-index: 1;
+  background: none;
+  border: none;
+  color: var(--c-text-primary);
+  font-size: var(--text-xl);
+  cursor: pointer;
+  padding: var(--space-xs);
+  line-height: 1;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.gallery__close:hover {
+  color: var(--c-text-accent);
+}
+
+.gallery__track {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  gap: var(--space-m);
+  padding: var(--space-xl) var(--space-l);
+  -webkit-overflow-scrolling: touch;
+}
+
+.gallery__track::-webkit-scrollbar {
+  display: none;
+}
+
+.gallery__slide {
+  flex: 0 0 auto;
+  scroll-snap-align: center;
+  max-height: 80vh;
+}
+
+.gallery__slide img {
+  max-height: 80vh;
+  width: auto;
+  object-fit: contain;
+  border-radius: 16px;
+}
+
+.gallery__slide img.img--landscape {
+  border-radius: 12px;
+}

@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Константин Илюхин — Lead Product Designer. 12 лет проектирую сложные мультиплатформенные продукты." />
+
+    <title>Константин Илюхин — Lead Product Designer</title>
+
+    <!-- Favicon: SVG для современных браузеров -->
+    <link rel="icon" href="/favicon/favicon.svg" type="image/svg+xml" />
+    <!-- PNG fallback для Safari и старых браузеров -->
+    <link rel="icon" href="/favicon/favicon-sm.png" sizes="32x32" type="image/png" />
+    <link rel="icon" href="/favicon/favicon.png" sizes="48x48" type="image/png" />
+    <!-- Apple Touch Icon для iOS -->
+    <link rel="apple-touch-icon" href="/favicon/favicon-lg.png" sizes="180x180" type="image/png" />
+
+    <meta property="og:title" content="Константин Илюхин — Lead Product Designer" />
+    <meta property="og:description" content="12 лет проектирую сложные мультиплатформенные продукты. Выстраиваю дизайн-процессы и убираю разрыв между дизайном, продуктом и разработкой." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/og.png" />
+
+    <link rel="preload" href="/fonts/GolosText-Medium.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/Tiny5-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/FiraMono-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+  </head>
+  <body>
+    <!-- Sticky Navigation -->
+    <nav class="sticky-nav" aria-label="Основная навигация" hidden>
+      <div class="sticky-nav__bar">
+        <span class="sticky-nav__left">
+          <a href="/media/Илюхин%20Константин%20Алексеевич.pdf" class="sticky-nav__link sticky-nav__link--pdf" target="_blank" rel="noopener noreferrer">PDF</a>
+          <a href="https://t.me/made_by_konstantin" class="sticky-nav__link sticky-nav__link--tg" target="_blank" rel="noopener noreferrer">TG</a>
+        </span>
+        <span class="sticky-nav__name">КОНСТАНТИН ИЛЮХИН</span>
+      </div>
+    </nav>
+
+    <main>
+      <!-- Hero Section -->
+      <section class="hero" id="hero">
+        <div class="hero__accent-bar" aria-hidden="true"></div>
+        <div class="hero__ascii-bg" aria-hidden="true"></div>
+        <div class="hero__ascii-art" aria-hidden="true"><!-- ASCII-арт подставляется из JS --></div>
+
+        <pre class="hero__gradient-bar" aria-hidden="true">░░  ▒▒  ▓▓  ██
+  ░░  ▒▒  ▓▓  ██
+░░  ▒▒  ▓▓  ██
+  ░░  ▒▒  ▓▓  ██
+░░  ▒▒  ▓▓  ██
+  ░░  ▒▒  ▓▓  ██
+░░  ▒▒  ▓▓  ██
+  ░░  ▒▒  ▓▓  ██
+░░  ▒▒  ▓▓  ██
+  ░░  ▒▒  ▓▓  ██
+░░  ▒▒  ▓▓  ██
+  ░░  ▒▒  ▓▓  ██</pre>
+
+        <p class="hero__role">Lead Product Designer</p>
+
+        <h1 class="hero__name"><span class="hero__name-first">константин</span><br /><span class="hero__name-second">илюхин</span></h1>
+
+        <div class="hero__slashes" aria-hidden="true">
+          <span class="hero__slash hero__slash--1">////</span>
+          <span class="hero__slash hero__slash--2">/////////////////////</span>
+          <span class="hero__slash hero__slash--3">///////////////</span>
+        </div>
+
+        <div class="hero__description">
+          <p>
+            <span>12&nbsp;лет проектирую сложные мультиплатформенные&nbsp;продукты</span>
+            <span>Выстраиваю дизайн&#8209;процессы и&nbsp;убираю разрыв между&nbsp;дизайном, продуктом&nbsp;и&nbsp;разработкой</span>
+            <span>Работал в&nbsp;госах и&nbsp;бигтехе: VK, Ростелеком, Росатом, Роснефть</span>
+          </p>
+        </div>
+
+        <pre class="hero__deco-cross" aria-hidden="true">  |
+—   —
+  |</pre>
+
+        <div class="hero__links">
+          <a href="/media/Илюхин%20Константин%20Алексеевич.pdf" class="hero__link hero__link--pdf" target="_blank" rel="noopener noreferrer">PDF</a>
+          <a href="https://t.me/made_by_konstantin" class="hero__link hero__link--tg" target="_blank" rel="noopener noreferrer">TG</a>
+        </div>
+
+        <div class="hero__scroll-hint" aria-hidden="true">▽</div>
+      </section>
+
+      <!-- Case Sections (Type A) -->
+      <!-- Рендерятся из cases.json через JS -->
+      <div id="cases"></div>
+
+      <!-- Contact Section -->
+      <section class="contact" id="contact">
+        <div class="contact__ascii-art" aria-hidden="true"><!-- ASCII-арт подставляется из JS --></div>
+        <div class="contact__content">
+          <p class="contact__text">
+            <span class="contact__line">Свяжитесь</span>
+            <a href="https://t.me/made_by_konstantin" class="contact__link hero__link hero__link--tg" target="_blank" rel="noopener noreferrer">@made_by_konstantin</a>
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <!-- Fullscreen Gallery -->
+    <div class="gallery" role="dialog" aria-label="Галерея проекта" aria-hidden="true">
+      <button class="gallery__close" aria-label="Закрыть галерею">&times;</button>
+      <div class="gallery__track">
+        <!-- Слайды подставляются из JS -->
+      </div>
+    </div>
+
+    <script type="module" src="/src/js/main.js"></script>
+  </body>
+</html>
