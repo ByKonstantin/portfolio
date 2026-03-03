@@ -1,15 +1,27 @@
+import Panzoom from '@panzoom/panzoom';
+
 let gallery = null;
 let track = null;
+let panzoomInstances = [];
+
+function destroyPanzoomInstances() {
+  panzoomInstances.forEach((p) => p.destroy());
+  panzoomInstances = [];
+}
 
 function openGallery(images) {
   if (!gallery || !track) return;
   if (!Array.isArray(images) || images.length === 0) return;
 
+  destroyPanzoomInstances();
   track.innerHTML = '';
 
   images.forEach((src) => {
     const slide = document.createElement('div');
     slide.className = 'gallery__slide';
+
+    const zoomWrap = document.createElement('div');
+    zoomWrap.className = 'gallery__slide-zoom';
 
     const img = document.createElement('img');
     img.src = src;
@@ -18,11 +30,26 @@ function openGallery(images) {
     img.addEventListener('load', function () {
       const isLandscape = this.naturalWidth >= this.naturalHeight;
       this.classList.add(isLandscape ? 'img--landscape' : 'img--portrait');
+      // Pinch-zoom только при одном слайде, иначе конфликт со свайпом между слайдами
+      if (images.length === 1) {
+        const instance = Panzoom(zoomWrap, {
+          maxScale: 4,
+          minScale: 0.5,
+          contain: 'outside',
+          cursor: 'default',
+          excludeClass: 'gallery__close',
+        });
+        panzoomInstances.push(instance);
+      }
     });
 
-    slide.appendChild(img);
+    zoomWrap.appendChild(img);
+    slide.appendChild(zoomWrap);
     track.appendChild(slide);
   });
+
+  // При одном слайде отключаем scroll-snap, чтобы можно было панорамировать
+  track.style.scrollSnapType = images.length > 1 ? 'x mandatory' : 'none';
 
   gallery.setAttribute('aria-hidden', 'false');
   gallery.removeAttribute('hidden');
@@ -34,6 +61,7 @@ function openGallery(images) {
 function closeGallery() {
   if (!gallery) return;
 
+  destroyPanzoomInstances();
   gallery.setAttribute('aria-hidden', 'true');
   gallery.setAttribute('hidden', '');
   document.body.classList.remove('gallery-open');

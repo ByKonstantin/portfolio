@@ -18,6 +18,13 @@ html {
   scroll-snap-type: y mandatory;
 }
 
+/* На мобильных — proximity вместо mandatory, чтобы pinch-zoom не «магнитился» */
+@media (max-width: 800px) {
+  html {
+    scroll-snap-type: y proximity;
+  }
+}
+
 body {
   font-family: var(--font-body);
   font-size: var(--text-m);
