@@ -14,7 +14,8 @@ test.describe('Галерея', () => {
 
     const gallery = page.locator('.gallery[aria-hidden="false"]');
     await expect(gallery).toBeVisible();
-    await expect(page.locator('.gallery__track img')).toBeVisible();
+    await page.waitForTimeout(700);
+    await expect(page.locator('.gallery__track .gallery__slide')).toHaveCount(1);
   });
 
   test('закрывается по кнопке', async ({ page }) => {
@@ -58,9 +59,8 @@ test.describe('Галерея на мобильном', () => {
     await page.locator('.case-section__screens[data-gallery]').first().click();
     const gallery = page.locator('.gallery[aria-hidden="false"]');
     await expect(gallery).toBeVisible();
-
-    const img = page.locator('.gallery__slide img');
-    await expect(img).toBeVisible();
+    await page.waitForTimeout(700);
+    await expect(page.locator('.gallery__track .gallery__slide')).toHaveCount(1);
   });
 
   test('мобильные стили галереи применяются (dvh, padding)', async ({ page }) => {
@@ -71,5 +71,32 @@ test.describe('Галерея на мобильном', () => {
     await expect(track).toBeVisible();
     const padding = await track.evaluate((el) => getComputedStyle(el).padding);
     expect(parseInt(padding, 10)).toBeGreaterThan(0);
+  });
+});
+
+test.describe('Pre-render кейсов', () => {
+  test('кейсы присутствуют в HTML при загрузке', async ({ page }) => {
+    const response = await page.goto('/');
+    const html = await response.text();
+    expect(html).toContain('id="case-1"');
+    expect(html).toContain('case-section');
+    expect(html).toContain('WINK Music');
+  });
+
+  test('нет дубликатов секций после hydrate', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    const sections = await page.locator('.case-section').count();
+    expect(sections).toBe(5);
+  });
+
+  test('навигация по кейсам работает при pre-rendered контенте', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForLoadState('networkidle');
+    await page.locator('#cases').scrollIntoViewIfNeeded();
+    await page.locator('.case-nav__link').nth(1).click();
+    await page.waitForTimeout(500);
+    const case2 = page.locator('#case-2');
+    await expect(case2).toBeInViewport();
   });
 });

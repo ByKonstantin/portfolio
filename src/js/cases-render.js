@@ -132,7 +132,7 @@ function renderCaseSection(caseItem, allCases, isFirst) {
   const img = document.createElement('img');
   img.className = 'case-section__screens-image';
   img.src = caseItem.preview || caseItem.gallery?.[0] || '';
-  img.alt = '';
+  img.alt = `Скриншот проекта ${caseItem.projectNames?.[0] || caseItem.title || 'Проект'}`;
   img.loading = 'lazy';
   img.addEventListener('load', function () {
     const isLandscape = this.naturalWidth >= this.naturalHeight;
@@ -185,15 +185,46 @@ function initCaseNavSticky() {
   observer.observe(hero);
 }
 
+function initNavClickHandlers() {
+  document.querySelectorAll('.case-nav__link').forEach((a) => {
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const id = a.getAttribute('href')?.slice(1);
+      if (id) document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+}
+
+function initScreensImageHandlers(container) {
+  container.querySelectorAll('.case-section__screens-image').forEach((img) => {
+    if (img.complete) {
+      const isLandscape = img.naturalWidth >= img.naturalHeight;
+      img.classList.add(isLandscape ? 'img--landscape' : 'img--portrait');
+    } else {
+      img.addEventListener('load', function () {
+        const isLandscape = this.naturalWidth >= this.naturalHeight;
+        this.classList.add(isLandscape ? 'img--landscape' : 'img--portrait');
+      });
+    }
+  });
+}
+
 export function initCasesRender() {
   const container = document.getElementById('cases');
   if (!container) return;
 
-  const cases = Array.isArray(casesData) ? casesData : [];
-  cases.forEach((c, i) => {
-    const section = renderCaseSection(c, cases, i === 0);
-    container.appendChild(section);
-  });
+  const isPreRendered = container.children.length > 0;
+
+  if (!isPreRendered) {
+    const cases = Array.isArray(casesData) ? casesData : [];
+    cases.forEach((c, i) => {
+      const section = renderCaseSection(c, cases, i === 0);
+      container.appendChild(section);
+    });
+  } else {
+    initNavClickHandlers();
+    initScreensImageHandlers(container);
+  }
 
   initNavLinksActive();
   initCaseNavSticky();

@@ -305,23 +305,39 @@
     position: relative;
     top: auto;
     left: auto;
-    width: auto;
-    height: auto;
+    width: 100%;
     display: flex;
     flex-wrap: nowrap;
     flex-direction: row;
+    align-items: flex-start;
+    gap: 0;
     order: 6;
-    margin-top: auto;
+    margin-top: calc(-1 * var(--space-m));
+    padding-bottom: max(env(safe-area-inset-bottom), 2rem);
   }
 
   .hero__link {
     position: relative;
-    top: auto;
-    left: auto;
-    display: inline;
+    display: inline-block;
+    font-size: var(--text-s);
+    padding: 16px 14px 16px 0;
+    min-height: 44px;
+    box-sizing: border-box;
   }
 
-  .hero__link--tg { margin-left: var(--space-m); }
+  .hero__link:first-child {
+    padding-left: 0;
+  }
+
+  .hero__link--tg {
+    margin-left: 1em;
+    padding-left: 14px;
+  }
+
+  /* Псевдо-блок расширяет кликабельную область без влияния на вёрстку */
+  .hero__link::before {
+    inset: -4px -6px;
+  }
 }
 
 /* 601–800px — ограничение ширины description */
