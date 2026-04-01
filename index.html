@@ -131,13 +131,32 @@
       </section>
     </main>
 
-    <!-- Fullscreen Gallery -->
-    <div class="gallery" role="dialog" aria-label="Галерея проекта" aria-hidden="true">
-      <button class="gallery__close" aria-label="Закрыть галерею">&times;</button>
-      <div class="gallery__track">
-        <!-- Слайды подставляются из JS -->
+    <!-- Drawer «Достижения» по клику на превью кейса -->
+    <div class="case-drawer" aria-hidden="true">
+      <div class="case-drawer__backdrop" aria-hidden="true"></div>
+      <div
+        class="case-drawer__panel"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="case-drawer-title"
+      >
+        <button type="button" class="case-drawer__close" aria-label="Закрыть">&times;</button>
+        <div class="case-drawer__grid">
+          <h2 id="case-drawer-title" class="case-drawer__title">Достижения</h2>
+          <div class="case-drawer__scroll">
+            <div class="case-drawer__body"></div>
+          </div>
+        </div>
       </div>
     </div>
+
+    <!--
+    Галерея по превью отключена (см. gallery.js). Раскомментируйте и верните initGallery в main.js при необходимости.
+    <div class="gallery" role="dialog" aria-label="Галерея проекта" aria-hidden="true" hidden>
+      <button class="gallery__close" aria-label="Закрыть галерею">&times;</button>
+      <div class="gallery__track"></div>
+    </div>
+    -->
 
     <!-- Yandex.Metrika counter -->
     <script type="text/javascript">

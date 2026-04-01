@@ -12,9 +12,17 @@
   transform: translateY(0);
 }
 
+/* Drawer поверх навбара; не показываем полоску, пока открыт drawer */
+body.case-drawer-open .sticky-nav,
+body.case-drawer-open .sticky-nav.is-visible {
+  transform: translateY(-100%);
+  visibility: hidden;
+  pointer-events: none;
+}
+
 .sticky-nav__bar {
   display: grid;
-  grid-template-columns: var(--grid-margin-pct) var(--grid-col1) var(--grid-col2) var(--grid-col3);
+  grid-template-columns: var(--grid-template-main);
   align-items: flex-end;
   width: 100%;
   height: 30px;
@@ -111,7 +119,8 @@
     padding-right: 0;
     transform: none;
     font-size: var(--text-s);
-    justify-self: start;
+    justify-self: end;
     align-self: flex-end;
+    text-align: right;
   }
 }

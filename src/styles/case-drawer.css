@@ -1,0 +1,203 @@
+/* Drawer: панель 80vw; заголовок в кол. 2; текст с той же левой границы, что описание (кол. 2), ширина до края превью */
+.case-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-case-drawer);
+  pointer-events: none;
+  visibility: hidden;
+  transition: visibility 0s var(--duration-drawer);
+}
+
+.case-drawer.is-open {
+  pointer-events: auto;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+.case-drawer__backdrop {
+  position: absolute;
+  inset: 0;
+  background: var(--c-overlay-scrim);
+  opacity: 0;
+  transition: opacity calc(var(--duration-drawer) * 0.85) var(--ease-drawer-backdrop);
+}
+
+.case-drawer.is-open .case-drawer__backdrop {
+  opacity: 1;
+}
+
+.case-drawer__panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 80vw;
+  max-width: 100%;
+  height: 100%;
+  height: 100dvh;
+  background: var(--c-bg-main);
+  border-left: 1px solid color-mix(in srgb, var(--c-text-secondary) 35%, transparent);
+  box-shadow: -16px 0 48px color-mix(in srgb, black 55%, transparent);
+  transform: translate3d(100%, 0, 0);
+  opacity: 0.92;
+  transition:
+    transform var(--duration-drawer) var(--ease-drawer-panel),
+    opacity calc(var(--duration-drawer) * 0.75) var(--ease-drawer-panel),
+    box-shadow var(--duration-drawer) var(--ease-drawer-panel);
+  will-change: transform;
+}
+
+.case-drawer.is-open .case-drawer__panel {
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+  box-shadow: -24px 0 64px color-mix(in srgb, black 45%, transparent);
+}
+
+/* Та же сетка, что у секции кейса: строка 2 = lead, 3 = блок с описанием */
+.case-drawer__grid {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100dvh;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: var(--grid-template-main);
+  grid-template-rows: 6.25% 18.75% minmax(0, 1fr);
+  gap: 0;
+  align-items: start;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.case-drawer__title,
+.case-drawer__scroll {
+  pointer-events: auto;
+}
+
+/* С колонкой текста кейса (имена / период) */
+.case-drawer__title {
+  grid-column: 2;
+  grid-row: 2;
+  align-self: start;
+  margin: 0;
+  padding-right: var(--grid-col-padding);
+  font-family: var(--font-heading);
+  font-size: clamp(1rem, 0.85rem + 0.6vw, 1.35rem);
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--c-text-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Левый край как у .case-section__description (кол. 2), ширина 2→5 без сдвига вправо */
+.case-drawer__scroll {
+  grid-column: 2 / 5;
+  grid-row: 3;
+  align-self: stretch;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-right: var(--grid-col-padding);
+  padding-bottom: var(--space-l);
+}
+
+.case-drawer__close {
+  position: fixed;
+  top: calc(var(--space-s) + env(safe-area-inset-top, 0px));
+  right: var(--space-m);
+  z-index: 2;
+  width: 2.75rem;
+  height: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--c-text-accent);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  pointer-events: auto;
+  transition: opacity var(--duration-fast) ease;
+}
+
+.case-drawer__close:hover {
+  opacity: 0.75;
+}
+
+.case-drawer__close:focus-visible {
+  outline: 2px solid var(--c-text-accent);
+  outline-offset: 2px;
+}
+
+/* Узкая мера строки (~64 знака), как раньше */
+.case-drawer__body {
+  max-width: 64ch;
+}
+
+.case-drawer__text {
+  font-family: var(--font-body);
+  font-size: clamp(1rem, calc((80vw - 4.5rem) / 60), 1.35rem);
+  line-height: 1.45;
+  color: var(--c-text-primary);
+  margin: 0 0 1.35em;
+  max-width: 100%;
+  text-wrap: pretty;
+}
+
+.case-drawer__text:last-child {
+  margin-bottom: 0;
+}
+
+@media (max-width: 800px) {
+  .case-drawer__grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    position: absolute;
+    inset: 0;
+    padding: var(--space-l) var(--grid-margin-mobile);
+    padding-top: calc(14px + var(--space-l));
+    padding-bottom: var(--space-l);
+    box-sizing: border-box;
+  }
+
+  .case-drawer__title {
+    grid-column: 1;
+    grid-row: 1;
+    padding-right: 0;
+  }
+
+  .case-drawer__scroll {
+    grid-column: 1;
+    grid-row: 2;
+    padding-right: 0;
+  }
+
+  .case-drawer__close {
+    right: var(--grid-margin-mobile);
+    top: calc(var(--space-s) + env(safe-area-inset-top, 0px));
+  }
+
+  .case-drawer__text {
+    font-size: clamp(0.9375rem, calc((80vw - 2.5rem) / 55), 1.2rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .case-drawer {
+    transition-duration: 0s;
+  }
+
+  .case-drawer__backdrop,
+  .case-drawer__panel {
+    transition-duration: 0.01ms;
+    transition-timing-function: linear;
+  }
+
+  .case-drawer__panel {
+    opacity: 1;
+  }
+}

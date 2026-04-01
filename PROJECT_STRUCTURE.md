@@ -6,7 +6,9 @@
 /
 ├── index.html                  Единственная HTML-страница
 ├── package.json                npm-конфигурация, скрипты dev/build/preview
-├── vite.config.js              Конфигурация сборщика Vite
+├── vite.config.js              Конфигурация сборщика Vite + пререндер кейсов в index.html
+├── scripts/
+│   └── pre-render-cases.js     HTML кейсов для SEO (логика совпадает с cases-render.js)
 ├── TECH_STACK.md               Описание технического стека
 ├── PROJECT_STRUCTURE.md        Этот файл
 │
@@ -21,6 +23,7 @@
 │   │
 │   ├── js/
 │   │   ├── main.js             Точка входа JS: инициализация всех модулей
+│   │   ├── cases-render.js     Рендер кейсов из cases.json в #cases (см. флаг ниже)
 │   │   ├── ascii-glitch.js     Модуль глитч-эффекта ASCII-арта
 │   │   ├── gallery.js          Модуль полноэкранной галереи
 │   │   └── sticky-nav.js       Модуль sticky-навигации
@@ -73,6 +76,7 @@
 - `root: '.'` — корень проекта
 - `build.outDir: 'dist'` — выходная папка
 - `server.open: true` — автооткрытие браузера при `npm run dev`
+- Плагин **`pre-render-cases`** — на этапе `transformIndexHtml` подставляет в `<div id="cases">` разметку из `scripts/pre-render-cases.js`, чтобы поисковики и первый paint видели контент кейсов без ожидания JS. Структура должна совпадать с `src/js/cases-render.js` (включая флаг `SHOW_CASE_ACHIEVEMENTS`, см. раздел про `cases.json`).
 
 ---
 
@@ -136,13 +140,17 @@
 
 ### `cases.css` — кейс-блоки
 
-Та же четырёхколоночная сетка. Два типа лейаута:
-- **Тип A** (`.case-section`) — текст слева (колонка 2), изображение справа (колонка 3)
-- **Тип B** (`.case-section--alt`) — зеркально: изображение слева, текст справа
+Четырёхколоночная сетка: margin + три колонки контента (`variables.css`).
 
-Изображение кликабельное (`cursor: pointer`), при hover — `scale(1.02)`.
+**Строки** (`grid-template-rows`, сумма 100%): `6.25%` резерв под sticky-nav; `18.75%` lead; `25%` описание; `25%` metrics; `18.75%` tail (ссылки); `6.25%` нижний отступ секции.
 
-**Адаптив (≤800px)**: одна колонка, текст сверху, изображение на всю ширину снизу.
+**Тип A** (`.case-section`): вся текстовая колонка в **grid column 2** — `.case-section__lead` (названия + `statsPeriod`), `.case-section__description`, `.case-section__metrics` (`stats` + `platforms`, `justify-content: space-between` по вертикали), `.case-section__tail` (при необходимости achievements + `.case-section__links`, ссылки прижаты к низу строки tail). Превью **`.case-section__right`**: колонки **3–4**, строки **3–6** (`grid-row: 3 / 7`), на всю высоту описания, метрик, ссылок и нижнего отступа.
+
+**Тип B** (`.case-section--alt`) — зеркально: текст в колонке **4**, превью в колонках **2–3**, те же строки; у превью отрицательный `margin-left` для визуального выхода в margin.
+
+Клик по `.case-section__screens` открывает галерею (если есть `data-gallery`).
+
+**Адаптив (≤800px)**: одна колонка, блоки стеком, превью на всю ширину.
 
 ### `gallery.css` — полноэкранная галерея
 
@@ -163,11 +171,11 @@
 
 ## JavaScript (`src/js/`)
 
-Все модули — ES Modules, без зависимостей. Точка входа `main.js` импортирует и инициализирует три модуля по событию `DOMContentLoaded`.
+Все модули — ES Modules, без тяжёлых зависимостей. Точка входа `main.js` импортирует и инициализирует несколько модулей по событию `DOMContentLoaded`.
 
 ### `main.js` — точка входа
 
-Импортирует `initAsciiGlitch`, `initGallery`, `initStickyNav` и вызывает их при загрузке DOM.
+Импортирует модули (в т.ч. `initCasesRender`, `initAsciiGlitch`, `initGallery`, `initStickyNav`) и вызывает их при загрузке DOM. Первым вызывается `initCasesRender()` — если кейсы уже вставлены пререндером, выполняется только инициализация картинок; иначе секции собираются из `cases.json` в `cases-render.js`.
 
 ### `ascii-glitch.js` — глитч-эффект ASCII-арта
 
@@ -225,6 +233,8 @@
   "type": "a",            // "a" — стандартный лейаут, "b" — альтернативный (зеркальный)
   "title": "...",
   "description": "...",
+  "platforms": ["Web", "iOS"],
+  "achievements": ["Факт 1", "Факт 2"],
   "links": [
     { "label": "Behance", "url": "https://..." }
   ],
@@ -237,6 +247,10 @@
 ```
 
 Сейчас содержит 6 заглушек (5 типа A, 1 типа B). Заполнится реальным контентом по макетам Figma.
+
+**Поле `platforms`**: массив строк — выводится в блоке платформ, если массив непустой.
+
+**Поле `achievements`**: массив строк с формулировками достижений. Данные **хранятся в JSON**; **вывод на страницу** включается константой **`SHOW_CASE_ACHIEVEMENTS`** (`true` / `false`). Сейчас в коде задано `false` — список не рендерится. Значение нужно менять **синхронно** в `src/js/cases-render.js` и `scripts/pre-render-cases.js`, иначе расходятся клиент и пререндер в HTML.
 
 ---
 
@@ -276,8 +290,8 @@
 
 ```
 cases.json
-    ↓  (JS читает при загрузке)
-main.js → рендерит секции в #cases
+    ↓  (пререндер в HTML при сборке / cases-render.js если #cases пустой)
+main.js → initCasesRender() → секции в #cases
     ↓
 Клик по .case-section__screens
     ↓  (читает data-gallery атрибут)

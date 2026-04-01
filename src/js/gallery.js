@@ -81,34 +81,40 @@ export function initGallery() {
     if (e.target === gallery) closeGallery();
   });
 
-  document.addEventListener('click', (e) => {
-    const trigger = e.target.closest('.case-section__screens');
-    if (!trigger) return;
-
-    const imagesAttr = trigger.dataset?.gallery ?? trigger.closest('.case-section')?.dataset?.gallery;
-    if (!imagesAttr) return;
-
-    try {
-      const images = JSON.parse(imagesAttr);
-      openGallery(images);
-    } catch {
-      console.warn('Gallery: invalid data-gallery JSON', imagesAttr);
-    }
-  });
+  /*
+   * Открытие галереи по клику на превью кейса отключено — см. case-drawer.js (достижения).
+   * Вернуть: повесьте data-gallery на .case-section__screens и раскомментируйте блок ниже + initGallery в main.js.
+   */
+  // document.addEventListener('click', (e) => {
+  //   const trigger = e.target.closest('.case-section__screens');
+  //   if (!trigger) return;
+  //   const imagesAttr = trigger.dataset?.gallery ?? trigger.closest('.case-section')?.dataset?.gallery;
+  //   if (!imagesAttr) return;
+  //   try {
+  //     openGallery(JSON.parse(imagesAttr));
+  //   } catch {
+  //     console.warn('Gallery: invalid data-gallery JSON', imagesAttr);
+  //   }
+  // });
+  // document.addEventListener('keydown', (e) => {
+  //   if (gallery?.getAttribute('aria-hidden') === 'false' && e.key === 'Escape') {
+  //     closeGallery();
+  //     return;
+  //   }
+  //   const trigger = document.activeElement?.closest('.case-section__screens');
+  //   if (trigger && (e.key === 'Enter' || e.key === ' ') && trigger.dataset?.gallery) {
+  //     e.preventDefault();
+  //     try {
+  //       openGallery(JSON.parse(trigger.dataset.gallery));
+  //     } catch {
+  //       console.warn('Gallery: invalid data-gallery JSON', trigger.dataset.gallery);
+  //     }
+  //   }
+  // });
 
   document.addEventListener('keydown', (e) => {
     if (gallery?.getAttribute('aria-hidden') === 'false' && e.key === 'Escape') {
       closeGallery();
-      return;
-    }
-    const trigger = document.activeElement?.closest('.case-section__screens');
-    if (trigger && (e.key === 'Enter' || e.key === ' ') && trigger.dataset?.gallery) {
-      e.preventDefault();
-      try {
-        openGallery(JSON.parse(trigger.dataset.gallery));
-      } catch {
-        console.warn('Gallery: invalid data-gallery JSON', trigger.dataset.gallery);
-      }
     }
   });
 }

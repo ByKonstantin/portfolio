@@ -2,7 +2,7 @@
 .contact {
   position: relative;
   display: grid;
-  grid-template-columns: var(--grid-margin-pct) var(--grid-col1) var(--grid-col2) var(--grid-col3);
+  grid-template-columns: var(--grid-template-main);
   grid-template-rows: 6.25% 1fr;
   gap: 0;
   width: 100%;

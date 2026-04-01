@@ -13,6 +13,10 @@ export default defineConfig({
   },
   server: {
     open: true,
+    /* чтобы правки CSS не залипали в кэше вкладки при dev */
+    headers: {
+      'Cache-Control': 'no-store',
+    },
   },
   plugins: [
     {

@@ -10,6 +10,10 @@ function isMobile() {
 }
 
 function updateVisibility() {
+  if (document.body.classList.contains('case-drawer-open')) {
+    nav?.classList.remove('is-visible');
+    return;
+  }
   const onMobile = isMobile();
   const shouldShow =
     !isHeroVisible &&

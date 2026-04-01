@@ -4,6 +4,7 @@
 @import './cases.css';
 @import './contact.css';
 @import './gallery.css';
+@import './case-drawer.css';
 
 *,
 *::before,
@@ -36,12 +37,12 @@ body {
   overflow-x: hidden;
 }
 
-body.gallery-open {
+body.gallery-open,
+body.case-drawer-open {
   overflow: hidden;
 }
 
-/* Скрыть case-nav и sticky-nav на экране контактов */
-body.contact-visible .case-section__nav.is-fixed,
+/* Скрыть sticky-nav на экране контактов */
 body.contact-visible .sticky-nav {
   visibility: hidden;
   pointer-events: none;

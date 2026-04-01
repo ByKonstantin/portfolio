@@ -1,5 +1,8 @@
 import casesData from '../data/cases.json';
 
+/** false — не выводим achievements (данные остаются в cases.json). Платформы всегда по полю platforms. */
+const SHOW_CASE_ACHIEVEMENTS = false;
+
 function escapeHtml(text) {
   if (!text) return '';
   const div = document.createElement('div');
@@ -7,192 +10,183 @@ function escapeHtml(text) {
   return div.innerHTML;
 }
 
-function renderCaseSection(caseItem, allCases, isFirst) {
+function renderCaseSection(caseItem) {
   const section = document.createElement('section');
   section.id = caseItem.id;
   section.className = 'case-section' + (caseItem.type === 'b' ? ' case-section--alt' : '');
 
-  /* ---- Строка 1: nav | stats | platforms ---- */
-  if (isFirst) {
-    const navWrapper = document.createElement('div');
-    navWrapper.className = 'case-section__nav-wrapper case-section__cell case-section__cell--r1-c1 case-section__cell--text';
-    const nav = document.createElement('nav');
-    nav.className = 'case-section__nav case-nav case-section__cell--text';
-    nav.setAttribute('aria-label', 'Навигация по кейсам');
-    allCases.forEach((c) => {
-      if (!c.navLabel) return;
-      const a = document.createElement('a');
-      a.href = `#${c.id}`;
-      a.className = 'case-nav__link';
-      a.textContent = c.navLabel;
-      a.addEventListener('click', (e) => {
-        e.preventDefault();
-        document.getElementById(c.id)?.scrollIntoView({ behavior: 'smooth' });
-      });
-      nav.appendChild(a);
-    });
-    navWrapper.appendChild(nav);
-    section.appendChild(navWrapper);
-  } else {
-    const spacer = document.createElement('div');
-    spacer.className = 'case-section__cell case-section__cell--r1-c1';
-    spacer.setAttribute('aria-hidden', 'true');
-    section.appendChild(spacer);
+  /* ---- Колонка 1: строка 2 — названия + период (statsPeriod) ---- */
+  if (caseItem.projectNames?.length || caseItem.title || caseItem.statsPeriod) {
+    const lead = document.createElement('div');
+    lead.className = 'case-section__lead case-section__cell case-section__cell--text';
+
+    if (caseItem.projectNames?.length) {
+      const names = document.createElement('div');
+      names.className = 'case-section__project-names';
+      names.innerHTML = caseItem.projectNames.map((n) => escapeHtml(n)).join('<br>');
+      lead.appendChild(names);
+    } else if (caseItem.title) {
+      const title = document.createElement('h2');
+      title.className = 'case-section__title';
+      title.textContent = caseItem.title;
+      lead.appendChild(title);
+    }
+
+    if (caseItem.statsPeriod) {
+      const period = document.createElement('div');
+      period.className = 'case-section__stats-period';
+      period.textContent = caseItem.statsPeriod;
+      lead.appendChild(period);
+    }
+
+    section.appendChild(lead);
   }
 
-  if (caseItem.stats || caseItem.statsPeriod) {
-    const stats = document.createElement('div');
-    stats.className = 'case-section__stats case-section__cell case-section__cell--r1-c2 case-section__cell--text';
-    stats.innerHTML = [caseItem.stats, caseItem.statsPeriod].filter(Boolean).map(escapeHtml).join('<br>');
-    section.appendChild(stats);
+  const hasStack = Boolean(
+    caseItem.description || caseItem.stats || caseItem.platforms?.length
+  );
+  const hasTail = Boolean(
+    (SHOW_CASE_ACHIEVEMENTS && caseItem.achievements?.length) || caseItem.links?.length
+  );
+
+  if (hasStack || hasTail) {
+    const mainCol = document.createElement('div');
+    mainCol.className = 'case-section__main case-section__cell case-section__cell--text';
+
+    if (hasStack) {
+      const stack = document.createElement('div');
+      stack.className = 'case-section__stack';
+
+      if (caseItem.description) {
+        const desc = document.createElement('div');
+        desc.className = 'case-section__description';
+        const p = document.createElement('p');
+        p.textContent = caseItem.description;
+        desc.appendChild(p);
+        stack.appendChild(desc);
+      }
+
+      if (caseItem.stats || caseItem.platforms?.length) {
+        const metrics = document.createElement('div');
+        metrics.className = 'case-section__metrics';
+
+        if (caseItem.stats) {
+          const stats = document.createElement('div');
+          stats.className = 'case-section__stats';
+          stats.textContent = caseItem.stats;
+          metrics.appendChild(stats);
+        }
+
+        if (caseItem.platforms?.length) {
+          const platforms = document.createElement('div');
+          platforms.className = 'case-section__platforms';
+          platforms.innerHTML = caseItem.platforms.map((p) => escapeHtml(p)).join('<br>');
+          metrics.appendChild(platforms);
+        }
+
+        stack.appendChild(metrics);
+      }
+
+      mainCol.appendChild(stack);
+    }
+
+    if (hasTail) {
+      const tail = document.createElement('div');
+      tail.className = 'case-section__tail';
+
+      if (SHOW_CASE_ACHIEVEMENTS && caseItem.achievements?.length) {
+        const ul = document.createElement('ul');
+        ul.className = 'case-section__achievements';
+        caseItem.achievements.forEach((text) => {
+          const li = document.createElement('li');
+          li.textContent = text;
+          ul.appendChild(li);
+        });
+        tail.appendChild(ul);
+      }
+
+      if (caseItem.links?.length) {
+        const links = document.createElement('div');
+        links.className = 'case-section__links';
+        caseItem.links.forEach((link) => {
+          const a = document.createElement('a');
+          a.href = link.url;
+          a.className = 'case-section__link';
+          a.target = '_blank';
+          a.rel = 'noopener noreferrer';
+          a.innerHTML = `<span>${escapeHtml(link.label)}</span><span class="case-section__link-arrow">↙</span>`;
+          links.appendChild(a);
+        });
+        tail.appendChild(links);
+      }
+
+      mainCol.appendChild(tail);
+    }
+
+    section.appendChild(mainCol);
   }
 
-  if (caseItem.platforms?.length) {
-    const platforms = document.createElement('div');
-    platforms.className = 'case-section__platforms case-section__cell case-section__cell--r1-c3 case-section__cell--text';
-    platforms.innerHTML = caseItem.platforms.map((p) => escapeHtml(p)).join('<br>');
-    section.appendChild(platforms);
+  const hasAchievements = caseItem.achievements?.length > 0;
+
+  if (hasAchievements) {
+    const moreLink = document.createElement('a');
+    moreLink.href = '#';
+    moreLink.className = 'case-section__more hero__link hero__link--pdf';
+    moreLink.textContent = 'Подробнее';
+    moreLink.setAttribute('aria-label', 'Показать достижения');
+    section.appendChild(moreLink);
   }
 
-  /* ---- Строка 2: project-names | description | right-content (starts) ---- */
-  if (caseItem.projectNames?.length) {
-    const names = document.createElement('div');
-    names.className = 'case-section__project-names case-section__cell case-section__cell--r2-c1 case-section__cell--text';
-    names.innerHTML = caseItem.projectNames.map((n) => escapeHtml(n)).join('<br>');
-    section.appendChild(names);
-  } else if (caseItem.title) {
-    const title = document.createElement('h2');
-    title.className = 'case-section__title case-section__cell case-section__cell--r2-c1 case-section__cell--text';
-    title.textContent = caseItem.title;
-    section.appendChild(title);
-  }
-
-  if (caseItem.description) {
-    const desc = document.createElement('div');
-    desc.className = 'case-section__description case-section__cell case-section__cell--r2-c2 case-section__cell--text';
-    const p = document.createElement('p');
-    p.textContent = caseItem.description;
-    desc.appendChild(p);
-    section.appendChild(desc);
-  }
-
-  /* ---- Строка 3: links | achievements | right-content (spans rows 2-4) ---- */
-  if (caseItem.links?.length) {
-    const links = document.createElement('div');
-    links.className = 'case-section__links case-section__cell case-section__cell--r3-c1 case-section__cell--text';
-    caseItem.links.forEach((link) => {
-      const a = document.createElement('a');
-      a.href = link.url;
-      a.className = 'case-section__link';
-      a.target = '_blank';
-      a.rel = 'noopener noreferrer';
-      a.innerHTML = `<span>${escapeHtml(link.label)}</span><span class="case-section__link-arrow">↙</span>`;
-      links.appendChild(a);
-    });
-    section.appendChild(links);
-  }
-
-  if (caseItem.achievements?.length) {
-    const ul = document.createElement('ul');
-    ul.className = 'case-section__achievements case-section__cell case-section__cell--r3-c2 case-section__cell--text';
-    caseItem.achievements.forEach((text) => {
-      const li = document.createElement('li');
-      li.textContent = text;
-      ul.appendChild(li);
-    });
-    section.appendChild(ul);
-  }
-
-  /* ---- Правая колонка: ASCII + screens (span rows 2-4) ---- */
+  /* ---- Колонки 2–3, строки 3–5 — превью / галерея ---- */
   const rightContent = document.createElement('div');
-  rightContent.className = 'case-section__right case-section__cell case-section__cell--r2-c3';
-
-  const asciiBar = document.createElement('div');
-  asciiBar.className = 'case-section__ascii-bar';
-  asciiBar.setAttribute('aria-hidden', 'true');
-  rightContent.appendChild(asciiBar);
-
-  const rightInner = document.createElement('div');
-  rightInner.className = 'case-section__right-content-inner';
-
-  const asciiBarH = document.createElement('div');
-  asciiBarH.className = 'case-section__ascii-bar-h';
-  asciiBarH.setAttribute('aria-hidden', 'true');
-  rightInner.appendChild(asciiBarH);
+  rightContent.className = 'case-section__right case-section__cell';
 
   const screens = document.createElement('div');
   screens.className = 'case-section__screens';
-  if (caseItem.gallery?.length) {
-    screens.dataset.gallery = JSON.stringify(caseItem.gallery);
+  if (hasAchievements) {
+    screens.dataset.achievements = JSON.stringify(caseItem.achievements);
   }
-  screens.setAttribute('role', caseItem.gallery?.length ? 'button' : 'presentation');
-  screens.setAttribute('tabindex', caseItem.gallery?.length ? 0 : -1);
-  screens.setAttribute('aria-label', caseItem.gallery?.length ? 'Открыть галерею' : '');
+  screens.setAttribute('role', hasAchievements ? 'button' : 'presentation');
+  screens.setAttribute('tabindex', hasAchievements ? 0 : -1);
+  screens.setAttribute('aria-label', hasAchievements ? 'Показать достижения' : '');
 
-  const img = document.createElement('img');
-  img.className = 'case-section__screens-image';
-  img.src = caseItem.preview || caseItem.gallery?.[0] || '';
-  img.alt = `Скриншот проекта ${caseItem.projectNames?.[0] || caseItem.title || 'Проект'}`;
-  img.loading = 'lazy';
-  img.addEventListener('load', function () {
-    const isLandscape = this.naturalWidth >= this.naturalHeight;
-    this.classList.add(isLandscape ? 'img--landscape' : 'img--portrait');
-  });
-  screens.appendChild(img);
+  const desktopSrc = caseItem.preview || caseItem.gallery?.[0] || '';
+  const mobileSrc = caseItem.previewMobile;
+  const imgAlt = `Скриншот проекта ${caseItem.projectNames?.[0] || caseItem.title || 'Проект'}`;
 
-  rightInner.appendChild(screens);
-  rightContent.appendChild(rightInner);
+  function bindScreensImgLoad(img) {
+    img.className = 'case-section__screens-image';
+    img.alt = imgAlt;
+    img.loading = 'lazy';
+    img.addEventListener('load', function () {
+      const isLandscape = this.naturalWidth >= this.naturalHeight;
+      this.classList.add(isLandscape ? 'img--landscape' : 'img--portrait');
+    });
+  }
+
+  if (mobileSrc && desktopSrc) {
+    const picture = document.createElement('picture');
+    const source = document.createElement('source');
+    source.media = '(max-width: 799px)';
+    source.srcset = mobileSrc;
+    source.type = 'image/webp';
+    const img = document.createElement('img');
+    img.src = desktopSrc;
+    bindScreensImgLoad(img);
+    picture.appendChild(source);
+    picture.appendChild(img);
+    screens.appendChild(picture);
+  } else if (desktopSrc) {
+    const img = document.createElement('img');
+    img.src = desktopSrc;
+    bindScreensImgLoad(img);
+    screens.appendChild(img);
+  }
+
+  rightContent.appendChild(screens);
   section.appendChild(rightContent);
 
   return section;
-}
-
-function initNavLinksActive() {
-  const links = document.querySelectorAll('.case-nav__link');
-  const sections = document.querySelectorAll('.case-section');
-  if (!links.length || !sections.length) return;
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      const intersecting = entries.filter((e) => e.isIntersecting);
-      if (!intersecting.length) return;
-      const best = intersecting.reduce((a, b) =>
-        (a.intersectionRatio >= b.intersectionRatio ? a : b)
-      );
-      const id = best.target.id;
-      links.forEach((a) => {
-        a.classList.toggle('is-active', a.getAttribute('href') === `#${id}`);
-      });
-    },
-    { threshold: 0.15, rootMargin: '-20% 0px -60% 0px' }
-  );
-
-  sections.forEach((s) => observer.observe(s));
-}
-
-function initCaseNavSticky() {
-  const nav = document.querySelector('.case-section__nav');
-  const hero = document.querySelector('#hero');
-  if (!nav || !hero) return;
-
-  const observer = new IntersectionObserver(
-    ([entry]) => {
-      nav.classList.toggle('is-fixed', !entry.isIntersecting);
-    },
-    { threshold: 0, rootMargin: '-1px 0px 0px 0px' }
-  );
-
-  observer.observe(hero);
-}
-
-function initNavClickHandlers() {
-  document.querySelectorAll('.case-nav__link').forEach((a) => {
-    a.addEventListener('click', (e) => {
-      e.preventDefault();
-      const id = a.getAttribute('href')?.slice(1);
-      if (id) document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-    });
-  });
 }
 
 function initScreensImageHandlers(container) {
@@ -217,15 +211,11 @@ export function initCasesRender() {
 
   if (!isPreRendered) {
     const cases = Array.isArray(casesData) ? casesData : [];
-    cases.forEach((c, i) => {
-      const section = renderCaseSection(c, cases, i === 0);
+    cases.forEach((c) => {
+      const section = renderCaseSection(c);
       container.appendChild(section);
     });
   } else {
-    initNavClickHandlers();
     initScreensImageHandlers(container);
   }
-
-  initNavLinksActive();
-  initCaseNavSticky();
 }

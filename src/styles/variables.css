@@ -35,6 +35,9 @@
   --c-bg-accent: #DEF511;
   --c-bg-secondary: #181818;
 
+  /* Оверлеи (drawer, модалки): чёрный с заданной непрозрачностью */
+  --c-overlay-scrim: color-mix(in srgb, black 40%, transparent);
+
   /* Spacing scale (base 8px) — fluid via clamp */
   --space-xs: clamp(4px, 0.5vw, 8px);
   --space-s: clamp(8px, 1vw, 16px);
@@ -52,7 +55,9 @@
   --grid-col3: 33%;
   --grid-col-padding: clamp(0.5rem, 0.5rem + 0.5vw, 1.25rem);
   --grid-margin-mobile: clamp(16px, 4vw, 32px);
-  --case-nav-height: 8em;
+
+  /* Hero, cases, contact, sticky-nav: margin+col1 | col2 | col3 */
+  --grid-template-main: var(--grid-margin-pct) var(--grid-col1) var(--grid-col2) var(--grid-col3);
 
   /* Typography — fluid sizes */
   --font-body: 'Golos Text', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
@@ -73,7 +78,24 @@
   --duration-normal: 300ms;
   --duration-slow: 600ms;
 
+  /* Drawer: медленнее, сильное затухание в конце */
+  --duration-drawer: 580ms;
+  --ease-drawer-backdrop: cubic-bezier(0.33, 0, 0.2, 1);
+  --ease-drawer-panel: cubic-bezier(0.22, 1, 0.32, 1);
+
   /* Z-index layers */
   --z-nav: 100;
   --z-gallery: 200;
+  --z-case-drawer: 200;
+}
+
+/* 801–1279px: первая+вторая колонки трека = 33%, превью — остаток 42∶33 */
+@media (max-width: 1279px) and (min-width: 801px) {
+  :root {
+    --grid-template-main:
+      var(--grid-margin-pct)
+      calc(33% - var(--grid-margin-pct))
+      calc((100% - 33%) * 42 / 75)
+      calc((100% - 33%) * 33 / 75);
+  }
 }
